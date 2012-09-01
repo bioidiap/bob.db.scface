@@ -168,7 +168,7 @@ def create_tables(args):
   from bob.db.utils import connection_string
 
   from sqlalchemy import create_engine
-  engine = create_engine(connection_string(args.type, args.files[0]), echo=args.verbose)
+  engine = create_engine(connection_string(args.type, args.files[0]), echo=(args.verbose >= 2))
   Client.metadata.create_all(engine)
   Subworld.metadata.create_all(engine)
   File.metadata.create_all(engine)
@@ -183,8 +183,6 @@ def create(args):
   from bob.db.utils import session
 
   dbfile = args.files[0]
-
-  args.verbose = 0 if args.verbose is None else sum(args.verbose)
 
   if args.recreate: 
     if args.verbose and os.path.exists(dbfile):
@@ -211,7 +209,7 @@ def add_command(subparsers):
 
   parser.add_argument('-R', '--recreate', action='store_true', default=False,
       help="If set, I'll first erase the current database")
-  parser.add_argument('-v', '--verbose', action='append_const', const=1,
+  parser.add_argument('-v', '--verbose', action='count',
       help="Do SQL operations in a verbose way")
   parser.add_argument('--featuresfile', action='store', metavar='FILE',
       default='/idiap/resource/database/scface/SCface_database/features.txt',

@@ -13,7 +13,7 @@ def nodot(item):
   """Can be used to ignore hidden files, starting with the . character."""
   return item[0] != '.'
 
-def add_clients(session, filename):
+def add_clients(session, filename, verbose):
   """Add clients to the SCFace database."""
 
   # open features.txt file containing information about the clients
@@ -44,64 +44,36 @@ def add_clients(session, filename):
       gender = 'f'
 
     # Add the client
+    if verbose: print "Adding file '%s'..." %(os.path.basename(filename).split('.')[0], )
     session.add(Client(int(tok[0]), group, int(birthyear), gender, int(tok[3]), int(tok[4]), int(tok[5])))
 
-def add_subworlds(session):
+def add_subworlds(session, verbose):
   """Adds splits in the world set, based on the client ids"""
   # one third
-  session.add(Subworld("onethird", 1))
-  session.add(Subworld("onethird", 4))
-  session.add(Subworld("onethird", 5))
-  session.add(Subworld("onethird", 6))
-  session.add(Subworld("onethird", 8))
-  session.add(Subworld("onethird", 11))
-  session.add(Subworld("onethird", 12))
-  session.add(Subworld("onethird", 18))
-  session.add(Subworld("onethird", 20))
-  session.add(Subworld("onethird", 30))
-  session.add(Subworld("onethird", 33))
-  session.add(Subworld("onethird", 36))
-  session.add(Subworld("onethird", 39))
-  session.add(Subworld("onethird", 40))
-  
-  # two thirds
-  session.add(Subworld("twothirds", 2))
-  session.add(Subworld("twothirds", 3))
-  session.add(Subworld("twothirds", 7))
-  session.add(Subworld("twothirds", 9))
-  session.add(Subworld("twothirds", 10))
-  session.add(Subworld("twothirds", 13))
-  session.add(Subworld("twothirds", 14))
-  session.add(Subworld("twothirds", 15))
-  session.add(Subworld("twothirds", 16))
-  session.add(Subworld("twothirds", 17))
-  session.add(Subworld("twothirds", 19))
-  session.add(Subworld("twothirds", 21))
-  session.add(Subworld("twothirds", 22))
-  session.add(Subworld("twothirds", 23))
-  session.add(Subworld("twothirds", 24))
-  session.add(Subworld("twothirds", 25))
-  session.add(Subworld("twothirds", 26))
-  session.add(Subworld("twothirds", 27))
-  session.add(Subworld("twothirds", 28))
-  session.add(Subworld("twothirds", 29))
-  session.add(Subworld("twothirds", 31))
-  session.add(Subworld("twothirds", 32))
-  session.add(Subworld("twothirds", 34))
-  session.add(Subworld("twothirds", 35))
-  session.add(Subworld("twothirds", 37))
-  session.add(Subworld("twothirds", 38))
-  session.add(Subworld("twothirds", 41))
-  session.add(Subworld("twothirds", 42))
-  session.add(Subworld("twothirds", 43))
-
+  snames = ['onethird', 'twothirds']
+  slists = [[ 1,  4,  5,  6,  8, 11, 12, 18, 20, 30, 
+             33, 36, 39, 40],
+            [ 2,  3,  7,  9, 10, 13, 14, 15, 16, 17,
+             19, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+             31, 32, 34, 35, 37, 38, 41, 42, 43]]
+  for k in range(len(snames)):
+    if verbose: print "Adding subworld '%s'" %(snames[k], )
+    su = Subworld(snames[k])
+    session.add(su)
+    session.flush()
+    session.refresh(su)
+    l = slists[k]
+    for c_id in l:
+      if verbose: print "Adding client '%d' to subworld '%s'..." %(c_id, snames[k])
+      su.clients.append(session.query(Client).filter(Client.id == c_id).first())
  
-def add_files(session, imagedir):
+def add_files(session, imagedir, verbose):
   """Add files to the SCFace database."""
  
-  def add_file(session, basename, maindir, frontal):
+  def add_file(session, basename, maindir, frontal, verbose):
     """Parse a single filename and add it to the list."""
     v = os.path.splitext(basename)[0].split('_')
+    if verbose: print "Adding file '%s'..." %(basename, )
     if frontal:
       session.add(File(int(v[0]), os.path.join(maindir, basename), 'frontal', 0))
     else:
@@ -114,64 +86,99 @@ def add_files(session, imagedir):
     elif maindir == 'mugshot_frontal_cropped_all':
       for f in filter(nodot, os.listdir( os.path.join( imagedir, maindir) )):
         basename, extension = os.path.splitext(f)
-        add_file(session, basename, maindir, True)
+        add_file(session, basename, maindir, True, verbose)
     else:
       for camdir in filter(nodot, os.listdir( os.path.join( imagedir, maindir) )):
         subdir = os.path.join(maindir, camdir)
         for f in filter(nodot, os.listdir( os.path.join( imagedir, subdir) )):
           basename, extension = os.path.splitext(f)
-          add_file(session, basename, subdir, False)
+          add_file(session, basename, subdir, False, verbose)
    
-
-def add_protocols(session):
+def add_protocols(session, verbose):
   """Adds protocols"""
 
-  # Protocols
-  session.add(Protocol('combined', 'enrol', 'frontal', 0))
-  session.add(Protocol('combined', 'probe', 'cam1', 1))
-  session.add(Protocol('combined', 'probe', 'cam1', 2))
-  session.add(Protocol('combined', 'probe', 'cam1', 3))
-  session.add(Protocol('combined', 'probe', 'cam2', 1))
-  session.add(Protocol('combined', 'probe', 'cam2', 2))
-  session.add(Protocol('combined', 'probe', 'cam2', 3))
-  session.add(Protocol('combined', 'probe', 'cam3', 1))
-  session.add(Protocol('combined', 'probe', 'cam3', 2))
-  session.add(Protocol('combined', 'probe', 'cam3', 3))
-  session.add(Protocol('combined', 'probe', 'cam4', 1))
-  session.add(Protocol('combined', 'probe', 'cam4', 2))
-  session.add(Protocol('combined', 'probe', 'cam4', 3))
-  session.add(Protocol('combined', 'probe', 'cam5', 1))
-  session.add(Protocol('combined', 'probe', 'cam5', 2))
-  session.add(Protocol('combined', 'probe', 'cam5', 3))
-  session.add(Protocol('close', 'enrol', 'frontal', 0))
-  session.add(Protocol('close', 'probe', 'cam1', 3))
-  session.add(Protocol('close', 'probe', 'cam2', 3))
-  session.add(Protocol('close', 'probe', 'cam3', 3))
-  session.add(Protocol('close', 'probe', 'cam4', 3))
-  session.add(Protocol('close', 'probe', 'cam5', 3))
-  session.add(Protocol('medium', 'enrol', 'frontal', 0))
-  session.add(Protocol('medium', 'probe', 'cam1', 2))
-  session.add(Protocol('medium', 'probe', 'cam2', 2))
-  session.add(Protocol('medium', 'probe', 'cam3', 2))
-  session.add(Protocol('medium', 'probe', 'cam4', 2))
-  session.add(Protocol('medium', 'probe', 'cam5', 2))
-  session.add(Protocol('far', 'enrol', 'frontal', 0))
-  session.add(Protocol('far', 'probe', 'cam1', 1))
-  session.add(Protocol('far', 'probe', 'cam2', 1))
-  session.add(Protocol('far', 'probe', 'cam3', 1))
-  session.add(Protocol('far', 'probe', 'cam4', 1))
-  session.add(Protocol('far', 'probe', 'cam5', 1))
-  
+  # 1. DEFINITIONS
+  # Numbers in the lists correspond to session identifiers
+  protocol_definitions = {}
+
+  # Protocol combined 
+  world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
+  enrol = [(['frontal'], [0])]
+  probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [1,2,3])]
+  protocol_definitions['combined'] = [world, enrol, probe]
+
+  # Protocol close
+  world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
+  enrol = [(['frontal'], [0])]
+  probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [3])]
+  protocol_definitions['close'] = [world, enrol, probe]
+
+  # Protocol medium
+  world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
+  enrol = [(['frontal'], [0])]
+  probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [2])]
+  protocol_definitions['medium'] = [world, enrol, probe]
+
+  # Protocol far
+  world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
+  enrol = [(['frontal'], [0])]
+  probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [1])]
+  protocol_definitions['far'] = [world, enrol, probe]
+
+  # 2. ADDITIONS TO THE SQL DATABASE
+  protocolPurpose_list = [('world', 'train'), ('dev', 'enrol'), ('dev', 'probe'), ('eval', 'enrol'), ('eval', 'probe')]
+  for proto in protocol_definitions:
+    p = Protocol(proto)
+    # Add protocol
+    if verbose: print "Adding protocol %s..." % (proto)
+    session.add(p)
+    session.flush()
+    session.refresh(p)
+
+    # Add protocol purposes
+    for key in range(len(protocolPurpose_list)):
+      purpose = protocolPurpose_list[key]
+      pu = ProtocolPurpose(p.id, purpose[0], purpose[1])
+      if verbose: print "  Adding protocol purpose ('%s','%s')..." % (purpose[0], purpose[1])
+      session.add(pu)
+      session.flush()
+      session.refresh(pu)
+
+       # Add files attached with this protocol purpose
+      client_group = ""
+      prop_list = []
+      if(key == 0): client_group = "world"
+      elif(key == 1 or key == 2): client_group = "dev"
+      elif(key == 3 or key == 4): client_group = "eval"
+      if(key == 0):
+        prop_list = protocol_definitions[proto][0]
+      if(key == 1 or key == 3):
+        prop_list = protocol_definitions[proto][1]
+      elif(key == 2 or key == 4):
+        prop_list = protocol_definitions[proto][2]
+
+      # Adds 'protocol' files
+      for el in prop_list:
+        cams = el[0] # list of camera identifiers
+        dids = el[1] # list of distance identifiers
+        q = session.query(File).join(Client).\
+              filter(Client.sgroup == client_group)
+        if cams:
+          q = q.filter(File.camera.in_(cams))
+        if dids:
+          q = q.filter(File.distance.in_(dids))
+        q = q.order_by(File.id)
+        for k in q:
+          if verbose: print "    Adding protocol file '%s'..." % (k.path)
+          pu.files.append(k)
+
 def create_tables(args):
   """Creates all necessary tables (only to be used at the first time)"""
 
   from bob.db.utils import create_engine_try_nolock
 
   engine = create_engine_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
-  Client.metadata.create_all(engine)
-  Subworld.metadata.create_all(engine)
-  File.metadata.create_all(engine)
-  Protocol.metadata.create_all(engine)
+  Base.metadata.create_all(engine)
 
 # Driver API
 # ==========
@@ -194,10 +201,10 @@ def create(args):
   # the real work...
   create_tables(args)
   s = session_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2)) 
-  add_clients(s, args.featuresfile)
-  add_subworlds(s)
-  add_files(s, args.imagedir)
-  add_protocols(s)
+  add_clients(s, args.featuresfile, args.verbose)
+  add_subworlds(s, args.verbose)
+  add_files(s, args.imagedir, args.verbose)
+  add_protocols(s, args.verbose)
   s.commit()
   s.close()
 

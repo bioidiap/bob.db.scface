@@ -58,6 +58,10 @@ class SCfaceDatabaseTest(unittest.TestCase):
     self.assertEqual(len(db.protocol_names()), 4)
     self.assertTrue(db.has_protocol('combined'))
 
+    self.assertEqual(len(db.subworlds()), 2)
+    self.assertEqual(len(db.subworld_names()), 2)
+    self.assertTrue(db.has_subworld('onethird'))
+
   def test03_files(self):
 
     db = Database()
@@ -85,6 +89,80 @@ class SCfaceDatabaseTest(unittest.TestCase):
     self.assertEqual(len(db.objects(protocol='combined', groups='eval', purposes='probe', classes='impostor')), 645)
     self.assertEqual(len(db.objects(protocol='combined', groups='eval', purposes='probe', classes='client', model_ids=100)), 15)
     self.assertEqual(len(db.objects(protocol='combined', groups='eval', purposes='probe', classes='impostor', model_ids=100)), 630)
+
+    # Protocol close
+    # World group
+    self.assertEqual(len(db.objects(protocol='close', groups='world')), 688)
+    self.assertEqual(len(db.objects(protocol='close', groups='world', purposes='train')), 688)
+    self.assertEqual(len(db.objects(protocol='close', groups='world', purposes='train', model_ids=3)), 16)
+
+    # Dev group
+    self.assertEqual(len(db.objects(protocol='close', groups='dev')), 264)
+    self.assertEqual(len(db.objects(protocol='close', groups='dev', purposes='enrol')), 44)
+    self.assertEqual(len(db.objects(protocol='close', groups='dev', purposes='probe')), 220)
+    self.assertEqual(len(db.objects(protocol='close', groups='dev', purposes='probe', classes='client')), 220)
+    self.assertEqual(len(db.objects(protocol='close', groups='dev', purposes='probe', classes='impostor')), 220)
+    self.assertEqual(len(db.objects(protocol='close', groups='dev', purposes='probe', classes='client', model_ids=47)), 5)
+    self.assertEqual(len(db.objects(protocol='close', groups='dev', purposes='probe', classes='impostor', model_ids=47)), 215)
+
+    # Eval group
+    self.assertEqual(len(db.objects(protocol='close', groups='eval')), 258)
+    self.assertEqual(len(db.objects(protocol='close', groups='eval', purposes='enrol')), 43)
+    self.assertEqual(len(db.objects(protocol='close', groups='eval', purposes='probe')), 215)
+    self.assertEqual(len(db.objects(protocol='close', groups='eval', purposes='probe', classes='client')), 215)
+    self.assertEqual(len(db.objects(protocol='close', groups='eval', purposes='probe', classes='impostor')), 215)
+    self.assertEqual(len(db.objects(protocol='close', groups='eval', purposes='probe', classes='client', model_ids=100)), 5)
+    self.assertEqual(len(db.objects(protocol='close', groups='eval', purposes='probe', classes='impostor', model_ids=100)), 210)
+
+    # Protocol medium
+    # World group
+    self.assertEqual(len(db.objects(protocol='medium', groups='world')), 688)
+    self.assertEqual(len(db.objects(protocol='medium', groups='world', purposes='train')), 688)
+    self.assertEqual(len(db.objects(protocol='medium', groups='world', purposes='train', model_ids=3)), 16)
+
+    # Dev group
+    self.assertEqual(len(db.objects(protocol='medium', groups='dev')), 264)
+    self.assertEqual(len(db.objects(protocol='medium', groups='dev', purposes='enrol')), 44)
+    self.assertEqual(len(db.objects(protocol='medium', groups='dev', purposes='probe')), 220)
+    self.assertEqual(len(db.objects(protocol='medium', groups='dev', purposes='probe', classes='client')), 220)
+    self.assertEqual(len(db.objects(protocol='medium', groups='dev', purposes='probe', classes='impostor')), 220)
+    self.assertEqual(len(db.objects(protocol='medium', groups='dev', purposes='probe', classes='client', model_ids=47)), 5)
+    self.assertEqual(len(db.objects(protocol='medium', groups='dev', purposes='probe', classes='impostor', model_ids=47)), 215)
+
+    # Eval group
+    self.assertEqual(len(db.objects(protocol='medium', groups='eval')), 258)
+    self.assertEqual(len(db.objects(protocol='medium', groups='eval', purposes='enrol')), 43)
+    self.assertEqual(len(db.objects(protocol='medium', groups='eval', purposes='probe')), 215)
+    self.assertEqual(len(db.objects(protocol='medium', groups='eval', purposes='probe', classes='client')), 215)
+    self.assertEqual(len(db.objects(protocol='medium', groups='eval', purposes='probe', classes='impostor')), 215)
+    self.assertEqual(len(db.objects(protocol='medium', groups='eval', purposes='probe', classes='client', model_ids=100)), 5)
+    self.assertEqual(len(db.objects(protocol='medium', groups='eval', purposes='probe', classes='impostor', model_ids=100)), 210)
+
+    # Protocol far
+    # World group
+    self.assertEqual(len(db.objects(protocol='far', groups='world')), 688)
+    self.assertEqual(len(db.objects(protocol='far', groups='world', purposes='train')), 688)
+    self.assertEqual(len(db.objects(protocol='far', groups='world', purposes='train', model_ids=3)), 16)
+
+    # Dev group
+    self.assertEqual(len(db.objects(protocol='far', groups='dev')), 264)
+    self.assertEqual(len(db.objects(protocol='far', groups='dev', purposes='enrol')), 44)
+    self.assertEqual(len(db.objects(protocol='far', groups='dev', purposes='probe')), 220)
+    self.assertEqual(len(db.objects(protocol='far', groups='dev', purposes='probe', classes='client')), 220)
+    self.assertEqual(len(db.objects(protocol='far', groups='dev', purposes='probe', classes='impostor')), 220)
+    self.assertEqual(len(db.objects(protocol='far', groups='dev', purposes='probe', classes='client', model_ids=47)), 5)
+    self.assertEqual(len(db.objects(protocol='far', groups='dev', purposes='probe', classes='impostor', model_ids=47)), 215)
+
+    # Eval group
+    self.assertEqual(len(db.objects(protocol='far', groups='eval')), 258)
+    self.assertEqual(len(db.objects(protocol='far', groups='eval', purposes='enrol')), 43)
+    self.assertEqual(len(db.objects(protocol='far', groups='eval', purposes='probe')), 215)
+    self.assertEqual(len(db.objects(protocol='far', groups='eval', purposes='probe', classes='client')), 215)
+    self.assertEqual(len(db.objects(protocol='far', groups='eval', purposes='probe', classes='impostor')), 215)
+    self.assertEqual(len(db.objects(protocol='far', groups='eval', purposes='probe', classes='client', model_ids=100)), 5)
+    self.assertEqual(len(db.objects(protocol='far', groups='eval', purposes='probe', classes='impostor', model_ids=100)), 210)
+
+    # TODO: T-norm and Z-norm files
 
   def test04_manage_dumplist_1(self):
 

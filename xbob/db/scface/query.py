@@ -87,7 +87,7 @@ class Database(object):
     return self.session.query(Subworld).filter(Subworld.name==name).count() != 0
 
   def clients(self, protocol=None, groups=None, subworld=None, gender=None, birthyear=None):
-    """Returns a set of clients for the specific query by the user.
+    """Returns a set of Clients for the specific query by the user.
 
     Keyword Parameters:
 
@@ -158,7 +158,7 @@ class Database(object):
     groups
       The groups to which the clients belong ('dev', 'eval', 'world')
 
-    Returns: A list containing all the client ids belonging to the given group.
+    Returns: A list containing all the clients belonging to the given group.
     """
 
     # T-Norm clients are the ones from the onethird world subset
@@ -175,7 +175,7 @@ class Database(object):
     groups
       The groups to which the clients belong ('dev', 'eval', 'world')
 
-    Returns: A list containing all the model ids belonging to the given group.
+    Returns: A list containing all the models belonging to the given group.
     """
 
     # Z-Norm clients are the ones from the onethird world subset
@@ -192,7 +192,7 @@ class Database(object):
     groups
       The groups to which the subjects attached to the models belong ('dev', 'eval', 'world')
 
-    Returns: A list containing all the model ids belonging to the given group.
+    Returns: A list containing all the models belonging to the given group.
     """
 
     return self.clients(protocol, groups)
@@ -204,7 +204,7 @@ class Database(object):
     return self.session.query(Client).filter(Client.id==id).count() != 0
 
   def client(self, id):
-    """Returns the client object in the database given a certain id. Raises
+    """Returns the Client object in the database given a certain id. Raises
     an error if that does not exist."""
 
     self.assert_validity()
@@ -221,7 +221,7 @@ class Database(object):
     groups
       The groups to which the subjects attached to the models belong ('dev', 'eval', 'world')
 
-    Returns: A list containing all the model ids belonging to the given group.
+    Returns: A list containing all the models belonging to the given group.
     """
 
     return self.tclients(protocol, groups)
@@ -377,9 +377,9 @@ class Database(object):
 
     # Now query the database
     retval = []
-    q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol)
-    q = q.join(Subworld).filter(Subworld.name.in_(subworld))
-    q = q.filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
+    q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
+                     join(Subworld).filter(Subworld.name.in_(subworld)).\
+                     filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))
     q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -425,9 +425,9 @@ class Database(object):
       model_ids = (model_ids,)
 
     retval = []    
-    q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol)
-    q = q.join(Subworld).filter(Subworld.name.in_(subworld))
-    q = q.filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
+    q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
+                     join(Subworld).filter(Subworld.name.in_(subworld)).\
+                     filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))
     q = q.order_by(File.client_id, File.camera, File.distance, File.id)

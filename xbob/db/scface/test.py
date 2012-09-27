@@ -33,7 +33,7 @@ class SCfaceDatabaseTest(unittest.TestCase):
 
     clients = db.clients()
     self.assertEqual(len(clients), 130) #130 clients used by the protocols
-    # Same clients involved in all the sets
+    # Number of clients in each set
     c_dev = db.clients(groups='dev')
     self.assertEqual(len(c_dev), 44) #43 clients in the dev set
     c_eval = db.clients(groups='eval')

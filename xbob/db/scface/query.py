@@ -378,7 +378,7 @@ class Database(object):
     # Now query the database
     retval = []
     q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
-                     join(Subworld).filter(Subworld.name.in_(subworld)).\
+                     join(Subworld, Client.subworld).filter(Subworld.name.in_(subworld)).\
                      filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))
@@ -426,7 +426,7 @@ class Database(object):
 
     retval = []    
     q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
-                     join(Subworld).filter(Subworld.name.in_(subworld)).\
+                     join(Subworld, Client.subworld).filter(Subworld.name.in_(subworld)).\
                      filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))

@@ -44,7 +44,7 @@ def add_clients(session, filename, verbose):
       gender = 'f'
 
     # Add the client
-    if verbose: print "Adding file '%s'..." %(os.path.basename(filename).split('.')[0], )
+    if verbose: print "Adding client '%s'..." %(os.path.basename(filename).split('.')[0], )
     session.add(Client(int(tok[0]), group, int(birthyear), gender, int(tok[3]), int(tok[4]), int(tok[5])))
 
 def add_subworlds(session, verbose):

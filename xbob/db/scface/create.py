@@ -24,7 +24,7 @@ def add_clients(session, filename, verbose):
     c = c + 1
     if c<=10:
       continue
-    
+
     # parse the line
     tok = line.split('\t')
 
@@ -44,14 +44,14 @@ def add_clients(session, filename, verbose):
       gender = 'f'
 
     # Add the client
-    if verbose: print "Adding client '%s'..." %(os.path.basename(filename).split('.')[0], )
+    if verbose: print "Adding client '%s'..." %tok[0]
     session.add(Client(int(tok[0]), group, int(birthyear), gender, int(tok[3]), int(tok[4]), int(tok[5])))
 
 def add_subworlds(session, verbose):
   """Adds splits in the world set, based on the client ids"""
   # one third
   snames = ['onethird', 'twothirds']
-  slists = [[ 1,  4,  5,  6,  8, 11, 12, 18, 20, 30, 
+  slists = [[ 1,  4,  5,  6,  8, 11, 12, 18, 20, 30,
              33, 36, 39, 40],
             [ 2,  3,  7,  9, 10, 13, 14, 15, 16, 17,
              19, 21, 22, 23, 24, 25, 26, 27, 28, 29,
@@ -66,10 +66,10 @@ def add_subworlds(session, verbose):
     for c_id in l:
       if verbose: print "Adding client '%d' to subworld '%s'..." %(c_id, snames[k])
       su.clients.append(session.query(Client).filter(Client.id == c_id).first())
- 
+
 def add_files(session, imagedir, verbose):
   """Add files to the SCFace database."""
- 
+
   def add_file(session, basename, maindir, frontal, verbose):
     """Parse a single filename and add it to the list."""
     v = os.path.splitext(basename)[0].split('_')
@@ -93,7 +93,7 @@ def add_files(session, imagedir, verbose):
         for f in filter(nodot, os.listdir( os.path.join( imagedir, subdir) )):
           basename, extension = os.path.splitext(f)
           add_file(session, basename, subdir, False, verbose)
-   
+
 def add_protocols(session, verbose):
   """Adds protocols"""
 
@@ -101,7 +101,7 @@ def add_protocols(session, verbose):
   # Numbers in the lists correspond to session identifiers
   protocol_definitions = {}
 
-  # Protocol combined 
+  # Protocol combined
   world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
   enrol = [(['frontal'], [0])]
   probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [1,2,3])]
@@ -190,7 +190,7 @@ def create(args):
 
   dbfile = args.files[0]
 
-  if args.recreate: 
+  if args.recreate:
     if args.verbose and os.path.exists(dbfile):
       print('unlinking %s...' % dbfile)
     if os.path.exists(dbfile): os.unlink(dbfile)
@@ -200,7 +200,7 @@ def create(args):
 
   # the real work...
   create_tables(args)
-  s = session_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2)) 
+  s = session_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
   add_clients(s, args.featuresfile, args.verbose)
   add_subworlds(s, args.verbose)
   add_files(s, args.imagedir, args.verbose)
@@ -219,9 +219,9 @@ def add_command(subparsers):
       help="Do SQL operations in a verbose way")
   parser.add_argument('--featuresfile', action='store', metavar='FILE',
       default='/idiap/resource/database/scface/SCface_database/features.txt',
-      help="Change the path to the file containing information about the clients of the SCFace database (defaults to %(default)s)") 
+      help="Change the path to the file containing information about the clients of the SCFace database (defaults to %(default)s)")
   parser.add_argument('-D', '--imagedir', action='store', metavar='DIR',
       default='/idiap/group/biometric/databases/scface/images',
       help="Change the relative path to the directory containing the images of the SCFace database (defaults to %(default)s)")
-  
+
   parser.set_defaults(func=create) #action

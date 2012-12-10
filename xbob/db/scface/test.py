@@ -40,7 +40,7 @@ class SCfaceDatabaseTest(unittest.TestCase):
     self.assertEqual(len(c_eval), 43) #44 clients in the eval set
     c_world = db.clients(groups='world')
     self.assertEqual(len(c_world), 43) #43 clients in the world set
-    # Check client ids 
+    # Check client ids
     self.assertTrue(db.has_client_id(1))
     self.assertFalse(db.has_client_id(395))
     # Check subworld
@@ -48,7 +48,7 @@ class SCfaceDatabaseTest(unittest.TestCase):
     self.assertEqual(len(db.clients(groups='world', subworld='twothirds')), 29)
     # Check files relationship
     c = db.client(1)
-    self.assertEqual(len(c.files), 22) 
+    self.assertEqual(len(c.files), 22)
 
   def test02_protocols(self):
 
@@ -164,20 +164,12 @@ class SCfaceDatabaseTest(unittest.TestCase):
 
     # TODO: T-norm and Z-norm files
 
-  def test04_manage_dumplist_1(self):
+  def test04_driver_api(self):
 
     from bob.db.script.dbmanage import main
-
     self.assertEqual(main('scface dumplist --self-test'.split()), 0)
-
-  def test05_manage_dumplist_2(self):
-    
-    from bob.db.script.dbmanage import main
-
-    self.assertEqual(main('scface dumplist --protocol=combined --classes=client --groups=dev --purposes=enrol --self-test'.split()), 0)
-
-  def test06_manage_checkfiles(self):
-
-    from bob.db.script.dbmanage import main
-
+    self.assertEqual(main('scface dumplist --protocol=combined --class=client --group=dev --purpose=enrol --client=66 --self-test'.split()), 0)
     self.assertEqual(main('scface checkfiles --self-test'.split()), 0)
+    self.assertEqual(main('scface reverse mugshot_frontal_cropped_all/066_frontal --self-test'.split()), 0)
+    self.assertEqual(main('scface path 65 --self-test'.split()), 0)
+

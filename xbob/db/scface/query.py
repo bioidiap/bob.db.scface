@@ -482,6 +482,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     """
 
     fobj = self.query(File).filter(File.path.in_(paths))
+    retval = []
     for p in paths:
       retval.extend([k.id for k in fobj if k.path == p])
     return retval

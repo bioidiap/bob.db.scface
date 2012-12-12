@@ -16,6 +16,7 @@ def nodot(item):
 def add_clients(session, filename, verbose):
   """Add clients to the SCFace database."""
 
+  if verbose: print "Adding clients..."
   # open features.txt file containing information about the clients
   f = open(filename, 'r')
   c = 0
@@ -44,7 +45,7 @@ def add_clients(session, filename, verbose):
       gender = 'f'
 
     # Add the client
-    if verbose: print "Adding client '%s'..." %tok[0]
+    if verbose>1: print "  Adding client '%s'..." %tok[0]
     session.add(Client(int(tok[0]), group, int(birthyear), gender, int(tok[3]), int(tok[4]), int(tok[5])))
 
 def add_subworlds(session, verbose):
@@ -64,7 +65,7 @@ def add_subworlds(session, verbose):
     session.refresh(su)
     l = slists[k]
     for c_id in l:
-      if verbose: print "Adding client '%d' to subworld '%s'..." %(c_id, snames[k])
+      if verbose>1: print "  Adding client '%d' to subworld '%s'..." %(c_id, snames[k])
       su.clients.append(session.query(Client).filter(Client.id == c_id).first())
 
 def add_files(session, imagedir, verbose):
@@ -73,7 +74,7 @@ def add_files(session, imagedir, verbose):
   def add_file(session, basename, maindir, frontal, verbose):
     """Parse a single filename and add it to the list."""
     v = os.path.splitext(basename)[0].split('_')
-    if verbose: print "Adding file '%s'..." %(basename, )
+    if verbose>1: print "  Adding file '%s'..." %(basename, )
     if frontal:
       session.add(File(int(v[0]), os.path.join(maindir, basename), 'frontal', 0))
     else:
@@ -81,6 +82,7 @@ def add_files(session, imagedir, verbose):
 
   for maindir in ['mugshot_frontal_cropped_all', 'surveillance_cameras_distance_1',\
                   'surveillance_cameras_distance_2', 'surveillance_cameras_distance_3']:
+    if verbose: print "Adding files from dir '%s'" % maindir
     if not os.path.isdir( os.path.join( imagedir, maindir) ):
       continue
     elif maindir == 'mugshot_frontal_cropped_all':
@@ -139,7 +141,7 @@ def add_protocols(session, verbose):
     for key in range(len(protocolPurpose_list)):
       purpose = protocolPurpose_list[key]
       pu = ProtocolPurpose(p.id, purpose[0], purpose[1])
-      if verbose: print "  Adding protocol purpose ('%s','%s')..." % (purpose[0], purpose[1])
+      if verbose>1: print "  Adding protocol purpose ('%s','%s')..." % (purpose[0], purpose[1])
       session.add(pu)
       session.flush()
       session.refresh(pu)
@@ -169,7 +171,7 @@ def add_protocols(session, verbose):
           q = q.filter(File.distance.in_(dids))
         q = q.order_by(File.id)
         for k in q:
-          if verbose: print "    Adding protocol file '%s'..." % (k.path)
+          if verbose>1: print "    Adding protocol file '%s'..." % (k.path)
           pu.files.append(k)
 
 def create_tables(args):
@@ -177,7 +179,7 @@ def create_tables(args):
 
   from bob.db.utils import create_engine_try_nolock
 
-  engine = create_engine_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
+  engine = create_engine_try_nolock(args.type, args.files[0], echo=(args.verbose > 2))
   Base.metadata.create_all(engine)
 
 # Driver API
@@ -200,7 +202,7 @@ def create(args):
 
   # the real work...
   create_tables(args)
-  s = session_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
+  s = session_try_nolock(args.type, args.files[0], echo=(args.verbose > 2))
   add_clients(s, args.featuresfile, args.verbose)
   add_subworlds(s, args.verbose)
   add_files(s, args.imagedir, args.verbose)
@@ -213,15 +215,9 @@ def add_command(subparsers):
 
   parser = subparsers.add_parser('create', help=create.__doc__)
 
-  parser.add_argument('-R', '--recreate', action='store_true', default=False,
-      help="If set, I'll first erase the current database")
-  parser.add_argument('-v', '--verbose', action='count',
-      help="Do SQL operations in a verbose way")
-  parser.add_argument('--featuresfile', action='store', metavar='FILE',
-      default='/idiap/resource/database/scface/SCface_database/features.txt',
-      help="Change the path to the file containing information about the clients of the SCFace database (defaults to %(default)s)")
-  parser.add_argument('-D', '--imagedir', action='store', metavar='DIR',
-      default='/idiap/group/biometric/databases/scface/images',
-      help="Change the relative path to the directory containing the images of the SCFace database (defaults to %(default)s)")
+  parser.add_argument('-R', '--recreate', action='store_true', help="If set, I'll first erase the current database")
+  parser.add_argument('-v', '--verbose', action='count', help="Do SQL operations in a verbose way")
+  parser.add_argument('--featuresfile', metavar='FILE', default='/idiap/resource/database/scface/SCface_database/features.txt', help="Change the path to the file containing information about the clients of the SCFace database.")
+  parser.add_argument('-D', '--imagedir', metavar='DIR', default='/idiap/group/biometric/databases/scface/images', help="Change the relative path to the directory containing the images of the SCFace database.")
 
   parser.set_defaults(func=create) #action

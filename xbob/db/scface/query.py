@@ -91,7 +91,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     if "world" in groups:
       q = self.query(Client).filter(Client.sgroup == 'world')
       if subworld:
-        q = q.join(Subworld, Client.subworld).filter(Subworld.name.in_(subworld))
+        q = q.join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld))
       if gender:
         q = q.filter(Client.gender.in_(gender))
       if birthyear:
@@ -283,9 +283,9 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     # Now query the database
     retval = []
     if 'world' in groups:
-      q = self.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol)
+      q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol)
       if subworld:
-        q = q.join(Subworld, Client.subworld).filter(Subworld.name.in_(subworld))
+        q = q.join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld))
       q = q.filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world'))
       if model_ids:
         q = q.filter(Client.id.in_(model_ids))
@@ -294,7 +294,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
 
     if ('dev' in groups or 'eval' in groups):
       if('enrol' in purposes):
-        q = self.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
+        q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
               filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enrol'))
         if model_ids:
           q = q.filter(Client.id.in_(model_ids))
@@ -303,7 +303,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
 
       if('probe' in purposes):
         if('client' in classes):
-          q = self.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
+          q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
           if model_ids:
             q = q.filter(Client.id.in_(model_ids))
@@ -311,7 +311,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
           retval += list(q)
 
         if('impostor' in classes):
-          q = self.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
+          q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
           if len(model_ids) == 1:
             q = q.filter(not_(File.client_id.in_(model_ids)))
@@ -356,8 +356,8 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
 
     # Now query the database
     retval = []
-    q = self.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
-                     join(Subworld, Client.subworld).filter(Subworld.name.in_(subworld)).\
+    q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
+                     join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld)).\
                      filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))
@@ -399,8 +399,8 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
       model_ids = (model_ids,)
 
     retval = []
-    q = self.query(File).join(Client).join(ProtocolPurpose, File.protocol_purposes).join(Protocol).\
-                     join(Subworld, Client.subworld).filter(Subworld.name.in_(subworld)).\
+    q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
+                     join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld)).\
                      filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))

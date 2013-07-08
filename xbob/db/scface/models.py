@@ -104,6 +104,43 @@ class File(Base, xbob.db.verification.utils.File):
     self.camera = camera
     self.distance = distance
 
+class Annotation(Base):
+  """Annotations of the SC face database consists of the left and right eye positions as well as the nose tip and the center of the mouth.
+  There is exactly one annotation for each file."""
+  __tablename__ = 'annotation'
+
+  id = Column(Integer, primary_key=True)
+  file_id = Column(Integer, ForeignKey('file.id'))
+
+  le_x = Column(Integer) # left eye
+  le_y = Column(Integer)
+  re_x = Column(Integer) # right eye
+  re_y = Column(Integer)
+  n_x = Column(Integer) # nose tip
+  n_y = Column(Integer)
+  m_x = Column(Integer) # mouth center
+  m_y = Column(Integer)
+
+  def __init__(self, file_id, annotations):
+    self.file_id = file_id
+
+    assert len(annotations) == 8
+    self.re_x = int(annotations[0])
+    self.re_y = int(annotations[1])
+    self.le_x = int(annotations[2])
+    self.le_y = int(annotations[3])
+    self.n_x = int(annotations[4])
+    self.n_y = int(annotations[5])
+    self.m_x = int(annotations[6])
+    self.m_y = int(annotations[7])
+
+  def __call__(self):
+    """Returns the annotations of this database in a dictionary: {'reye' : (re_y, re_x), 'leye' : (le_y, le_x)}."""
+    return {'reye' : (self.re_y, self.re_x), 'leye' : (self.le_y, self.le_x), 'nose' : (self.n_y, self.n_x), 'mouth' : (self.m_y, self.m_x) }
+
+  def __repr__(self):
+    return "<Annotation('%s': 'reye'=%dx%d, 'leye'=%dx%d, 'nose'=%dx%d, 'mouth'=%dx%d)>" % (self.file_id, self.re_y, self.re_x, self.le_y, self.le_x,self.n_y, self.n_x, self.m_y, self.m_x)
+
 
 class Protocol(Base):
   """SCface protocols"""

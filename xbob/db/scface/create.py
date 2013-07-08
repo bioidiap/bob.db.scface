@@ -96,6 +96,39 @@ def add_files(session, imagedir, verbose):
           basename, extension = os.path.splitext(f)
           add_file(session, basename, subdir, False, verbose)
 
+
+def add_annotations(session, annotation_file, verbose):
+  """Reads the annotation file and adds the annotations to the .sql3 database."""
+
+  # iterate though all stored images and try to access the annotations
+  session.flush()
+  if verbose: print "Reading annotations file '%s' ..." % annotation_file
+  annotations = {}
+  # read the annotation file
+  with open(annotation_file, 'r') as f:
+    for line in f:
+      line = line.rstrip()
+      # skip empty and comment lines
+      if line and line[0] != '#':
+        splits = line.split()
+        # check validity
+        assert len(splits) == 9
+        assert splits[0] not in annotations
+        # add annotations
+        annotations[splits[0]] = splits[1:]
+
+  if verbose: print "Adding annotations ..."
+  files = session.query(File)
+  for f in files:
+    # get the filename w/o extension
+    filename = os.path.basename(f.path)
+    if filename in annotations:
+      if verbose>1: print "  Adding annotation '%s'..." %(filename, )
+      session.add(Annotation(f.id, annotations[filename]))
+    else:
+      print "Could not read annotations for file '%s'" % filename
+
+
 def add_protocols(session, verbose):
   """Adds protocols"""
 
@@ -207,6 +240,7 @@ def create(args):
   add_subworlds(s, args.verbose)
   add_files(s, args.imagedir, args.verbose)
   add_protocols(s, args.verbose)
+  add_annotations(s, args.annotfile, args.verbose)
   s.commit()
   s.close()
 
@@ -219,5 +253,7 @@ def add_command(subparsers):
   parser.add_argument('-v', '--verbose', action='count', help="Do SQL operations in a verbose way")
   parser.add_argument('--featuresfile', metavar='FILE', default='/idiap/resource/database/scface/SCface_database/features.txt', help="Change the path to the file containing information about the clients of the SCFace database.")
   parser.add_argument('-D', '--imagedir', metavar='DIR', default='/idiap/group/biometric/databases/scface/images', help="Change the relative path to the directory containing the images of the SCFace database.")
+  import pkg_resources
+  parser.add_argument('-A', '--annotfile', metavar='DIR', default=pkg_resources.resource_filename('xbob.db.scface', 'scface_annotations.txt'), help="Change the relative path to the directory containing the images of the SCFace database.")
 
   parser.set_defaults(func=create) #action

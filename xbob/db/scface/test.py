@@ -164,7 +164,31 @@ class SCfaceDatabaseTest(unittest.TestCase):
 
     # TODO: T-norm and Z-norm files
 
-  def test04_driver_api(self):
+  def test04_annotations(self):
+    # Tests that for all files the annotated eye positions exist and are in correct order
+    db = xbob.db.scface.Database()
+
+    for f in db.objects():
+      annotations = db.annotations(f.id)
+      self.assertTrue(annotations is not None)
+      self.assertEqual(len(annotations), 4)
+      self.assertTrue('leye' in annotations)
+      self.assertTrue('reye' in annotations)
+      self.assertTrue('nose' in annotations)
+      self.assertTrue('mouth' in annotations)
+      self.assertEqual(len(annotations['reye']), 2)
+      self.assertEqual(len(annotations['leye']), 2)
+      self.assertEqual(len(annotations['nose']), 2)
+      self.assertEqual(len(annotations['mouth']), 2)
+      # assert that the eye positions are not exchanged
+      self.assertTrue(annotations['leye'][1] > annotations['reye'][1])
+      # assert that the vertical positions of eyes, nose and mouth fit
+      self.assertTrue(annotations['leye'][0] < annotations['nose'][0])
+      self.assertTrue(annotations['reye'][0] < annotations['nose'][0])
+      self.assertTrue(annotations['nose'][0] < annotations['mouth'][0])
+
+
+  def test05_driver_api(self):
 
     from bob.db.script.dbmanage import main
     self.assertEqual(main('scface dumplist --self-test'.split()), 0)

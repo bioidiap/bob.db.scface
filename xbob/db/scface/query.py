@@ -231,7 +231,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     return model_id
 
   def objects(self, protocol=None, purposes=None, model_ids=None, groups=None,
-      classes=None, subworld=None):
+      classes=None, subworld=None, distances=None):
     """Returns a set of Files for the specific query by the user.
 
     Keyword Parameters:
@@ -265,6 +265,10 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
       In order to be considered, "world" should be in groups and only one
       split should be specified.
 
+    distances
+      Specify the subject-camera distance as an integral value.
+      Possible values: (3: close, 2:medium, 1:far)
+
     Returns: A list of Files with the given properties
     """
 
@@ -273,6 +277,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     groups = self.check_parameters_for_validity(groups, "group", self.groups())
     classes = self.check_parameters_for_validity(classes, "class", ('client', 'impostor'))
     subworld = self.check_parameters_for_validity(subworld, "subworld", self.subworld_names(), [])
+    distances = self.check_parameters_for_validity(distances, "distance", (0,1,2,3))
 
     import collections
     if(model_ids is None):
@@ -286,7 +291,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
       q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol)
       if subworld:
         q = q.join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld))
-      q = q.filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world'))
+      q = q.filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.distance.in_(distances)))
       if model_ids:
         q = q.filter(Client.id.in_(model_ids))
       q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -304,7 +309,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
       if('probe' in purposes):
         if('client' in classes):
           q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
-                filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
+                filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe', File.distance.in_(distances)))
           if model_ids:
             q = q.filter(Client.id.in_(model_ids))
           q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -312,7 +317,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
 
         if('impostor' in classes):
           q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
-                filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
+                filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe', File.distance.in_(distances)))
           if len(model_ids) == 1:
             q = q.filter(not_(File.client_id.in_(model_ids)))
           q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -366,7 +371,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
 
     return retval
 
-  def zobjects(self, protocol=None, model_ids=None, groups=None):
+  def zobjects(self, protocol=None, model_ids=None, groups=None, distances=None):
     """Returns a set of Files to perform Z-norm score normalization.
 
     Keyword Parameters:
@@ -382,6 +387,10 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     groups
       Ignored.
 
+    distances
+      Specify the subject-camera distance as an integral value.
+      Possible values: (3: close, 2:medium, 1:far)
+
     Returns: A set of Files
     """
 
@@ -391,6 +400,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     validcam = ('cam1','cam2','cam3','cam4','cam5')
 
     protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())
+    distances = self.check_parameters_for_validity(distances, "distance", (1,2,3))
 
     import collections
     if(model_ids is None):
@@ -401,13 +411,34 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     retval = []
     q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
                      join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld)).\
-                     filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
+                     filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam), File.distance.in_(distances)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))
     q = q.order_by(File.client_id, File.camera, File.distance, File.id)
     retval += list(q)
 
     return retval
+
+  def annotations(self, file_id):
+    """Returns the annotations for the image with the given file id.
+
+    Keyword Parameters:
+
+    file_id
+      The id of the File object to retrieve the annotations for.
+
+    Returns: the eye annotations as a dictionary {'reye':(y,x), 'leye':(y,x), 'mouth':(y,x), 'nose':(y,x)}.
+    """
+
+    self.assert_validity()
+
+    query = self.query(Annotation).join(File).filter(File.id==file_id)
+    assert query.count() == 1
+    annotation = query.first()
+
+    # return the annotations as returned by the call function of the Annotation object
+    return annotation()
+
 
   def protocol_names(self):
     """Returns all registered protocol names"""

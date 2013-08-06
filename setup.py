@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 setup(
 
     name='xbob.db.scface',
-    version='1.1.0',
+    version='1.1.1',
     description='SCface Database Access API for Bob',
     url='http://github.com/bioidiap/xbob.db.scface',
     license='GPLv3',

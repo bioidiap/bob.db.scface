@@ -84,7 +84,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
     groups = self.check_parameters_for_validity(groups, 'group', self.groups())
     subworld = self.check_parameters_for_validity(subworld, "subworld", self.subworld_names(), [])
     gender = self.check_parameters_for_validity(gender, "gender", self.genders(), [])
-    birthyear = self.check_parameters_for_validity(birthyear, 'birthyear', range(1900,2050), [])
+    birthyear = self.check_parameters_for_validity(birthyear, 'birthyear', list(range(1900,2050)), [])
 
     retval = []
     # List of the clients

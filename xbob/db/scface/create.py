@@ -16,7 +16,7 @@ def nodot(item):
 def add_clients(session, filename, verbose):
   """Add clients to the SCFace database."""
 
-  if verbose: print "Adding clients..."
+  if verbose: print("Adding clients...")
   # open features.txt file containing information about the clients
   f = open(filename, 'r')
   c = 0
@@ -45,7 +45,7 @@ def add_clients(session, filename, verbose):
       gender = 'f'
 
     # Add the client
-    if verbose>1: print "  Adding client '%s'..." %tok[0]
+    if verbose>1: print("  Adding client '%s'..." %tok[0])
     session.add(Client(int(tok[0]), group, int(birthyear), gender, int(tok[3]), int(tok[4]), int(tok[5])))
 
 def add_subworlds(session, verbose):
@@ -58,14 +58,14 @@ def add_subworlds(session, verbose):
              19, 21, 22, 23, 24, 25, 26, 27, 28, 29,
              31, 32, 34, 35, 37, 38, 41, 42, 43]]
   for k in range(len(snames)):
-    if verbose: print "Adding subworld '%s'" %(snames[k], )
+    if verbose: print("Adding subworld '%s'" %(snames[k], ))
     su = Subworld(snames[k])
     session.add(su)
     session.flush()
     session.refresh(su)
     l = slists[k]
     for c_id in l:
-      if verbose>1: print "  Adding client '%d' to subworld '%s'..." %(c_id, snames[k])
+      if verbose>1: print("  Adding client '%d' to subworld '%s'..." %(c_id, snames[k]))
       su.clients.append(session.query(Client).filter(Client.id == c_id).first())
 
 def add_files(session, imagedir, verbose):
@@ -74,7 +74,7 @@ def add_files(session, imagedir, verbose):
   def add_file(session, basename, maindir, frontal, verbose):
     """Parse a single filename and add it to the list."""
     v = os.path.splitext(basename)[0].split('_')
-    if verbose>1: print "  Adding file '%s'..." %(basename, )
+    if verbose>1: print("  Adding file '%s'..." %(basename, ))
     if frontal:
       session.add(File(int(v[0]), os.path.join(maindir, basename), 'frontal', 0))
     else:
@@ -82,7 +82,7 @@ def add_files(session, imagedir, verbose):
 
   for maindir in ['mugshot_frontal_cropped_all', 'surveillance_cameras_distance_1',\
                   'surveillance_cameras_distance_2', 'surveillance_cameras_distance_3']:
-    if verbose: print "Adding files from dir '%s'" % maindir
+    if verbose: print("Adding files from dir '%s'" % maindir)
     if not os.path.isdir( os.path.join( imagedir, maindir) ):
       continue
     elif maindir == 'mugshot_frontal_cropped_all':
@@ -102,7 +102,7 @@ def add_annotations(session, annotation_file, verbose):
 
   # iterate though all stored images and try to access the annotations
   session.flush()
-  if verbose: print "Reading annotations file '%s' ..." % annotation_file
+  if verbose: print("Reading annotations file '%s' ..." % annotation_file)
   annotations = {}
   # read the annotation file
   with open(annotation_file, 'r') as f:
@@ -117,16 +117,16 @@ def add_annotations(session, annotation_file, verbose):
         # add annotations
         annotations[splits[0]] = splits[1:]
 
-  if verbose: print "Adding annotations ..."
+  if verbose: print("Adding annotations ...")
   files = session.query(File)
   for f in files:
     # get the filename w/o extension
     filename = os.path.basename(f.path)
     if filename in annotations:
-      if verbose>1: print "  Adding annotation '%s'..." %(filename, )
+      if verbose>1: print("  Adding annotation '%s'..." %(filename, ))
       session.add(Annotation(f.id, annotations[filename]))
     else:
-      print "Could not read annotations for file '%s'" % filename
+      print("Could not read annotations for file '%s'" % filename)
 
 
 def add_protocols(session, verbose):
@@ -165,7 +165,7 @@ def add_protocols(session, verbose):
   for proto in protocol_definitions:
     p = Protocol(proto)
     # Add protocol
-    if verbose: print "Adding protocol %s..." % (proto)
+    if verbose: print("Adding protocol %s..." % (proto))
     session.add(p)
     session.flush()
     session.refresh(p)
@@ -174,7 +174,7 @@ def add_protocols(session, verbose):
     for key in range(len(protocolPurpose_list)):
       purpose = protocolPurpose_list[key]
       pu = ProtocolPurpose(p.id, purpose[0], purpose[1])
-      if verbose>1: print "  Adding protocol purpose ('%s','%s')..." % (purpose[0], purpose[1])
+      if verbose>1: print("  Adding protocol purpose ('%s','%s')..." % (purpose[0], purpose[1]))
       session.add(pu)
       session.flush()
       session.refresh(pu)
@@ -204,7 +204,7 @@ def add_protocols(session, verbose):
           q = q.filter(File.distance.in_(dids))
         q = q.order_by(File.id)
         for k in q:
-          if verbose>1: print "    Adding protocol file '%s'..." % (k.path)
+          if verbose>1: print("    Adding protocol file '%s'..." % (k.path))
           pu.files.append(k)
 
 def create_tables(args):

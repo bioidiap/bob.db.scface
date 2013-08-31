@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 setup(
 
     name='xbob.db.scface',
-    version='1.1.2',
+    version='1.1.3a0',
     description='SCface Database Access API for Bob',
     url='https://pypi.python.org/pypi/xbob.db.scface',
     license='GPLv3',

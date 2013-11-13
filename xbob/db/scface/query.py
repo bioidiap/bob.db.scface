@@ -36,10 +36,10 @@ class Database(xbob.db.verification.utils.SQLiteDatabase, xbob.db.verification.u
   and for the data itself inside the database.
   """
 
-  def __init__(self):
+  def __init__(self, original_directory = None, original_extension = '.jpg'):
     # call base class constructors to open a session to the database
     xbob.db.verification.utils.SQLiteDatabase.__init__(self, SQLITE_FILE, File)
-    xbob.db.verification.utils.ZTDatabase.__init__(self)
+    xbob.db.verification.utils.ZTDatabase.__init__(self, original_directory=original_directory, original_extension=original_extension)
 
   def groups(self):
     """Returns the names of all registered groups"""

@@ -22,14 +22,14 @@ from setuptools import setup, find_packages
 # parameters that define our package.
 setup(
 
-    name='xbob.db.scface',
-    version='1.2.2a0',
+    name='bob.db.scface',
+    version='2.0.0a0',
     description='SCface Database Access API for Bob',
-    url='https://pypi.python.org/pypi/xbob.db.scface',
+    url='https://pypi.python.org/pypi/bob.db.scface',
     license='GPLv3',
     author='Laurent El Shafey',
     author_email='laurent.el-shafey@idiap.ch',
-    keywords='face recognition, bob, xbob, xbob.db, SCface',
+    keywords='face recognition, bob, bob.db, SCface',
     long_description=open('README.rst').read(),
 
     # This line is required for any distutils based packaging.
@@ -39,29 +39,29 @@ setup(
 
     install_requires=[
       'setuptools',
-      'bob',  # base signal proc./machine learning library
-      'xbob.db.verification.utils>=1.0.0' # defines a set of utilities for face verification databases like this one.
+      'bob.db.base',
+      'bob.db.verification.utils'
     ],
 
     namespace_packages = [
-      'xbob',
-      'xbob.db',
-      ],
+      'bob',
+      'bob.db',
+    ],
 
     entry_points = {
       # bob database declaration
       'bob.db': [
-        'scface = xbob.db.scface.driver:Interface',
-        ],
+        'scface = bob.db.scface.driver:Interface',
+      ],
 
       # bob unittest declaration
       'bob.test': [
-        'scface = xbob.db.scface.test:SCfaceDatabaseTest',
-        ],
-      },
+        'scface = bob.db.scface.test',
+      ],
+    },
 
     classifiers = [
-      'Development Status :: 5 - Production/Stable',
+      'Development Status :: 4 - Beta',
       'Environment :: Console',
       'Intended Audience :: Developers',
       'Intended Audience :: Education',
@@ -72,5 +72,5 @@ setup(
       'Programming Language :: Python :: 3',
       'Topic :: Scientific/Engineering :: Artificial Intelligence',
       'Topic :: Database :: Front-Ends',
-      ],
+    ],
 )

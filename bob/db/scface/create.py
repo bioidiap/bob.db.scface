@@ -224,7 +224,7 @@ def add_protocols(session, verbose):
 def create_tables(args):
   """Creates all necessary tables (only to be used at the first time)"""
 
-  from bob.db.utils import create_engine_try_nolock
+  from bob.db.base.utils import create_engine_try_nolock
 
   engine = create_engine_try_nolock(args.type, args.files[0], echo=(args.verbose > 2))
   Base.metadata.create_all(engine)
@@ -235,7 +235,7 @@ def create_tables(args):
 def create(args):
   """Creates or re-creates this database"""
 
-  from bob.db.utils import session_try_nolock
+  from bob.db.base.utils import session_try_nolock
 
   dbfile = args.files[0]
 
@@ -268,6 +268,6 @@ def add_command(subparsers):
   parser.add_argument('--featuresfile', metavar='FILE', default='/idiap/resource/database/scface/SCface_database/features.txt', help="Change the path to the file containing information about the clients of the SCFace database.")
   parser.add_argument('-D', '--imagedir', metavar='DIR', default='/idiap/group/biometric/databases/scface/images', help="Change the relative path to the directory containing the images of the SCFace database.")
   import pkg_resources
-  parser.add_argument('-A', '--annotfile', metavar='DIR', default=pkg_resources.resource_filename('xbob.db.scface', 'scface_annotations.txt'), help="Change the relative path to the directory containing the images of the SCFace database.")
+  parser.add_argument('-A', '--annotfile', metavar='DIR', default=pkg_resources.resource_filename(__name__, 'scface_annotations.txt'), help="Change the relative path to the directory containing the images of the SCFace database.")
 
   parser.set_defaults(func=create) #action

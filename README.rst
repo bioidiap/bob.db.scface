@@ -27,7 +27,7 @@ The package is available in two different distribution formats:
 1. You can download it from `PyPI <http://pypi.python.org/pypi>`_, or
 
 2. You can download it in its source form from `its git repository
-   <https://github.com/bioidiap/xbob.db.scface>`_. When you download the
+   <https://github.com/bioidiap/bob.db.scface>`_. When you download the
    version at the git repository, you will need to run a command to recreate
    the backend SQLite file required for its operation. This means that the
    database raw files must be installed somewhere in this case. With option
@@ -47,11 +47,11 @@ script)::
 
     install_requires=[
       ...
-      "xbob.db.scface",
+      "bob.db.scface",
     ],
 
 Proceed normally with your ``boostrap/buildout`` steps and you should be all
-set. That means you can now import the ``xbob.db.scface`` namespace into your scripts.
+set. That means you can now import the ``bob.db.scface`` namespace into your scripts.
 
 Modify your buildout.cfg and download from git
 ==============================================
@@ -67,8 +67,8 @@ lines::
   auto-checkout = *
   eggs = bob
          ...
-         xbob.db.scface
+         bob.db.scface
 
   [sources]
-  xbob.db.scface = git https://github.com/bioidiap/xbob.db.scface.git
+  bob.db.scface = git https://github.com/bioidiap/bob.db.scface.git
   ...

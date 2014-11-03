@@ -53,14 +53,10 @@ setup(
       'bob.db': [
         'scface = bob.db.scface.driver:Interface',
       ],
-
-      # bob unittest declaration
-      'bob.test': [
-        'scface = bob.db.scface.test',
-      ],
     },
 
     classifiers = [
+      'Framework :: Bob',
       'Development Status :: 4 - Beta',
       'Environment :: Console',
       'Intended Audience :: Developers',

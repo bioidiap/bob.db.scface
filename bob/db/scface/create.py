@@ -152,30 +152,30 @@ def add_protocols(session, verbose):
 
   # Protocol combined
   world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
-  enrol = [(['frontal'], [0])]
+  enroll = [(['frontal'], [0])]
   probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [1,2,3])]
-  protocol_definitions['combined'] = [world, enrol, probe]
+  protocol_definitions['combined'] = [world, enroll, probe]
 
   # Protocol close
   world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
-  enrol = [(['frontal'], [0])]
+  enroll = [(['frontal'], [0])]
   probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [3])]
-  protocol_definitions['close'] = [world, enrol, probe]
+  protocol_definitions['close'] = [world, enroll, probe]
 
   # Protocol medium
   world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
-  enrol = [(['frontal'], [0])]
+  enroll = [(['frontal'], [0])]
   probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [2])]
-  protocol_definitions['medium'] = [world, enrol, probe]
+  protocol_definitions['medium'] = [world, enroll, probe]
 
   # Protocol far
   world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
-  enrol = [(['frontal'], [0])]
+  enroll = [(['frontal'], [0])]
   probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [1])]
-  protocol_definitions['far'] = [world, enrol, probe]
+  protocol_definitions['far'] = [world, enroll, probe]
 
   # 2. ADDITIONS TO THE SQL DATABASE
-  protocolPurpose_list = [('world', 'train'), ('dev', 'enrol'), ('dev', 'probe'), ('eval', 'enrol'), ('eval', 'probe')]
+  protocolPurpose_list = [('world', 'train'), ('dev', 'enroll'), ('dev', 'probe'), ('eval', 'enroll'), ('eval', 'probe')]
   for proto in protocol_definitions:
     p = Protocol(proto)
     # Add protocol

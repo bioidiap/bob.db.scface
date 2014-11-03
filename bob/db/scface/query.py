@@ -254,7 +254,7 @@ class Database(bob.db.verification.utils.SQLiteDatabase, bob.db.verification.uti
       One of the SCFace protocols ('combined', 'close', 'medium', 'far')
 
     purposes
-      The purposes required to be retrieved ('enrol', 'probe', 'world') or a tuple
+      The purposes required to be retrieved ('enroll', 'probe', 'world') or a tuple
       with several of them. If 'None' is given (this is the default), it is
       considered the same as a tuple with all possible values. This field is
       ignored for the data from the "world" group.
@@ -312,9 +312,9 @@ class Database(bob.db.verification.utils.SQLiteDatabase, bob.db.verification.uti
       retval += list(q)
 
     if ('dev' in groups or 'eval' in groups):
-      if('enrol' in purposes):
+      if('enroll' in purposes):
         q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
-              filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enrol'))
+              filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enroll'))
         if model_ids:
           q = q.filter(Client.id.in_(model_ids))
         q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -362,7 +362,7 @@ class Database(bob.db.verification.utils.SQLiteDatabase, bob.db.verification.uti
 
     # ZT-Norm cohort is 'onethird'
     subworld = ('onethird',)
-    # WARNING: Restrict to frontal camera (enrol T-Norm models)
+    # WARNING: Restrict to frontal camera (enroll T-Norm models)
     validcam = ('frontal',)
 
     protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())
@@ -410,7 +410,7 @@ class Database(bob.db.verification.utils.SQLiteDatabase, bob.db.verification.uti
 
     # ZT-Norm cohort is 'onethird'
     subworld = ('onethird',)
-    # WARNING: Restrict to non-frontal camera (enrol T-Norm models)
+    # WARNING: Restrict to non-frontal camera (enroll T-Norm models)
     validcam = ('cam1','cam2','cam3','cam4','cam5')
 
     protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())

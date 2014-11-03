@@ -93,7 +93,7 @@ def test_objects():
 
   # Dev group
   assert len(db.objects(protocol='combined', groups='dev')) == 704
-  assert len(db.objects(protocol='combined', groups='dev', purposes='enrol')) == 44
+  assert len(db.objects(protocol='combined', groups='dev', purposes='enroll')) == 44
   assert len(db.objects(protocol='combined', groups='dev', purposes='probe')) == 660
   assert len(db.objects(protocol='combined', groups='dev', purposes='probe', classes='client')) == 660
   assert len(db.objects(protocol='combined', groups='dev', purposes='probe', classes='impostor')) == 660
@@ -102,7 +102,7 @@ def test_objects():
 
   # Eval group
   assert len(db.objects(protocol='combined', groups='eval')) == 688
-  assert len(db.objects(protocol='combined', groups='eval', purposes='enrol')) == 43
+  assert len(db.objects(protocol='combined', groups='eval', purposes='enroll')) == 43
   assert len(db.objects(protocol='combined', groups='eval', purposes='probe')) == 645
   assert len(db.objects(protocol='combined', groups='eval', purposes='probe', classes='client')) == 645
   assert len(db.objects(protocol='combined', groups='eval', purposes='probe', classes='impostor')) == 645
@@ -117,7 +117,7 @@ def test_objects():
 
   # Dev group
   assert len(db.objects(protocol='close', groups='dev')) == 264
-  assert len(db.objects(protocol='close', groups='dev', purposes='enrol')) == 44
+  assert len(db.objects(protocol='close', groups='dev', purposes='enroll')) == 44
   assert len(db.objects(protocol='close', groups='dev', purposes='probe')) == 220
   assert len(db.objects(protocol='close', groups='dev', purposes='probe', classes='client')) == 220
   assert len(db.objects(protocol='close', groups='dev', purposes='probe', classes='impostor')) == 220
@@ -126,7 +126,7 @@ def test_objects():
 
   # Eval group
   assert len(db.objects(protocol='close', groups='eval')) == 258
-  assert len(db.objects(protocol='close', groups='eval', purposes='enrol')) == 43
+  assert len(db.objects(protocol='close', groups='eval', purposes='enroll')) == 43
   assert len(db.objects(protocol='close', groups='eval', purposes='probe')) == 215
   assert len(db.objects(protocol='close', groups='eval', purposes='probe', classes='client')) == 215
   assert len(db.objects(protocol='close', groups='eval', purposes='probe', classes='impostor')) == 215
@@ -141,7 +141,7 @@ def test_objects():
 
   # Dev group
   assert len(db.objects(protocol='medium', groups='dev')) == 264
-  assert len(db.objects(protocol='medium', groups='dev', purposes='enrol')) == 44
+  assert len(db.objects(protocol='medium', groups='dev', purposes='enroll')) == 44
   assert len(db.objects(protocol='medium', groups='dev', purposes='probe')) == 220
   assert len(db.objects(protocol='medium', groups='dev', purposes='probe', classes='client')) == 220
   assert len(db.objects(protocol='medium', groups='dev', purposes='probe', classes='impostor')) == 220
@@ -150,7 +150,7 @@ def test_objects():
 
   # Eval group
   assert len(db.objects(protocol='medium', groups='eval')) == 258
-  assert len(db.objects(protocol='medium', groups='eval', purposes='enrol')) == 43
+  assert len(db.objects(protocol='medium', groups='eval', purposes='enroll')) == 43
   assert len(db.objects(protocol='medium', groups='eval', purposes='probe')) == 215
   assert len(db.objects(protocol='medium', groups='eval', purposes='probe', classes='client')) == 215
   assert len(db.objects(protocol='medium', groups='eval', purposes='probe', classes='impostor')) == 215
@@ -165,7 +165,7 @@ def test_objects():
 
   # Dev group
   assert len(db.objects(protocol='far', groups='dev')) == 264
-  assert len(db.objects(protocol='far', groups='dev', purposes='enrol')) == 44
+  assert len(db.objects(protocol='far', groups='dev', purposes='enroll')) == 44
   assert len(db.objects(protocol='far', groups='dev', purposes='probe')) == 220
   assert len(db.objects(protocol='far', groups='dev', purposes='probe', classes='client')) == 220
   assert len(db.objects(protocol='far', groups='dev', purposes='probe', classes='impostor')) == 220
@@ -174,7 +174,7 @@ def test_objects():
 
   # Eval group
   assert len(db.objects(protocol='far', groups='eval')) == 258
-  assert len(db.objects(protocol='far', groups='eval', purposes='enrol')) == 43
+  assert len(db.objects(protocol='far', groups='eval', purposes='enroll')) == 43
   assert len(db.objects(protocol='far', groups='eval', purposes='probe')) == 215
   assert len(db.objects(protocol='far', groups='eval', purposes='probe', classes='client')) == 215
   assert len(db.objects(protocol='far', groups='eval', purposes='probe', classes='impostor')) == 215
@@ -214,7 +214,7 @@ def test_driver_api():
   # Tests the bob_dbmanage.py driver API
   from bob.db.base.script.dbmanage import main
   assert main('scface dumplist --self-test'.split()) == 0
-  assert main('scface dumplist --protocol=combined --class=client --group=dev --purpose=enrol --client=66 --self-test'.split()) == 0
+  assert main('scface dumplist --protocol=combined --class=client --group=dev --purpose=enroll --client=66 --self-test'.split()) == 0
   assert main('scface checkfiles --self-test'.split()) == 0
   assert main('scface reverse mugshot_frontal_cropped_all/066_frontal --self-test'.split()) == 0
   assert main('scface path 65 --self-test'.split()) == 0

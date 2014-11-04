@@ -2,9 +2,11 @@
 .. @author: Manuel Guenther <Manuel.Guenther@idiap.ch>
 .. @date:   Tue Aug 26 09:42:18 CEST 2014
 
-========================================
- SC face Database Verification Protocol
-========================================
+.. _bob.db.scface:
+
+=======================================
+ SCface Database Verification Protocol
+=======================================
 
 .. todolist::
 

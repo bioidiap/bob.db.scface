@@ -32,7 +32,7 @@ setup(
     name='bob.db.scface',
     version=version,
     description='SCface Database Access API for Bob',
-    url='https://github.com/bioidiap/bob.db.scface',
+    url='https://gitlab.idiap.ch/bob/bob.db.scface',
     license='GPLv3',
     author='Laurent El Shafey',
     author_email='laurent.el-shafey@idiap.ch',

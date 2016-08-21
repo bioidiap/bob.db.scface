@@ -14,7 +14,7 @@ The actual raw data for the SCface_ database should be downloaded from the origi
 The Database Interface
 ----------------------
 
-The :py:class:`bob.db.scface.Database` complies with the standard biometric verification database as described in :ref:`commons`, implementing both interfaces :py:class:`bob.db.verification.utils.SQLiteDatabase` and :py:class:`bob.db.verification.utils.ZTDatabase`.
+The :py:class:`bob.db.scface.Database` complies with the standard biometric verification database as described in :ref:`commons`, implementing both interfaces :py:class:`bob.db.data.SQLiteDatabase`.
 
 .. todo::
    Explain the particularities of the :py:class:`bob.db.scface.Database`.

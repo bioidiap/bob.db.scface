@@ -20,16 +20,14 @@
 SCFace database in the most obvious ways.
 """
 
-import os
-from bob.db.base import utils
 from .models import *
 from .driver import Interface
 
-import bob.db.verification.utils
+import bob.db.base
 
 SQLITE_FILE = Interface().files()[0]
 
-class Database(bob.db.verification.utils.SQLiteDatabase, bob.db.verification.utils.ZTDatabase):
+class Database(bob.db.base.SQLiteDatabase):
   """The dataset class opens and maintains a connection opened to the Database.
 
   It provides many different ways to probe for the characteristics of the data
@@ -38,8 +36,9 @@ class Database(bob.db.verification.utils.SQLiteDatabase, bob.db.verification.uti
 
   def __init__(self, original_directory = None, original_extension = '.jpg'):
     # call base class constructors to open a session to the database
-    bob.db.verification.utils.SQLiteDatabase.__init__(self, SQLITE_FILE, File)
-    bob.db.verification.utils.ZTDatabase.__init__(self, original_directory=original_directory, original_extension=original_extension)
+    super(Database, self).__init__(SQLITE_FILE, File)
+    self.original_directory = original_directory
+    self.original_extension = original_extension
 
   def groups(self, protocol=None):
     """Returns the names of all registered groups"""
@@ -481,4 +480,19 @@ class Database(bob.db.verification.utils.SQLiteDatabase, bob.db.verification.uti
     """Returns the list of allowed purposes"""
 
     return ProtocolPurpose.purpose_choices
+
+  def t_model_ids(self, protocol, groups = 'dev', **kwargs):
+    """Returns the list of model ids used for T-Norm of the given protocol for the given group that satisfy your query.
+    For possible keyword arguments, please check the :py:meth:`tmodel_ids` function."""
+    return self.uniquify(self.tmodel_ids(protocol=protocol, groups=groups, **kwargs))
+
+  def t_enroll_files(self, protocol, model_id, groups = 'dev', **kwargs):
+    """Returns the list of T-Norm model enrollment File objects from the given model id of the given protocol for the given group that satisfy your query.
+    For possible keyword arguments, please check the :py:meth:`tobjects` function."""
+    return self.uniquify(self.tobjects(protocol=protocol, groups=groups, model_ids=(model_id,), **kwargs))
+
+  def z_probe_files(self, protocol, groups = 'dev', **kwargs):
+    """Returns the list of Z-Norm probe File objects to probe the model with the given model id of the given protocol for the given group that satisfy your query.
+    For possible keyword arguments, please check the :py:meth:`zobjects` function."""
+    return self.uniquify(self.zobjects(protocol=protocol, groups=groups, **kwargs))
 

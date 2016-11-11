@@ -63,7 +63,7 @@ def test_clients():
   assert len(db.clients(groups='world', subworld='twothirds')) == 29
   # Check files relationship
   c = db.client(1)
-  assert len(c.files) == 22
+  assert len(c.files) == 23
 
 
 @db_available
@@ -71,8 +71,8 @@ def test_protocols():
 
   db = bob.db.scface.Database()
 
-  assert len(db.protocols()) == 4
-  assert len(db.protocol_names()) == 4
+  assert len(db.protocols()) == 5
+  assert len(db.protocol_names()) == 5
   assert db.has_protocol('combined')
 
   assert len(db.subworlds()) == 2
@@ -182,6 +182,7 @@ def test_objects():
   assert len(db.objects(protocol='far', groups='eval', purposes='probe', classes='impostor', model_ids=100)) == 210
 
   # TODO: T-norm and Z-norm files
+  # TODO: IR protocol
 
 
 @db_available
@@ -218,4 +219,3 @@ def test_driver_api():
   assert main('scface checkfiles --self-test'.split()) == 0
   assert main('scface reverse mugshot_frontal_cropped_all/066_frontal --self-test'.split()) == 0
   assert main('scface path 65 --self-test'.split()) == 0
-

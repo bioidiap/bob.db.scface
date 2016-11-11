@@ -118,6 +118,7 @@ class File(Base, bob.db.base.File):
     # set the remaining information of the file
     self.camera = camera
     self.distance = distance
+    self.client_id = client_id
 
 class Annotation(Base):
   """Annotations of the SC face database consists of the left and right eye positions as well as the nose tip and the center of the mouth.
@@ -201,4 +202,3 @@ class ProtocolPurpose(Base):
 
   def __repr__(self):
     return "ProtocolPurpose('%s', '%s', '%s')" % (self.protocol.name, self.sgroup, self.purpose)
-

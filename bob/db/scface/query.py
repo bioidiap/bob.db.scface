@@ -27,6 +27,7 @@ import bob.db.base
 
 SQLITE_FILE = Interface().files()[0]
 
+
 class Database(bob.db.base.SQLiteDatabase):
   """The dataset class opens and maintains a connection opened to the Database.
 
@@ -34,16 +35,16 @@ class Database(bob.db.base.SQLiteDatabase):
   and for the data itself inside the database.
   """
 
-  def __init__(self, original_directory = None, original_extension = '.jpg'):
+  def __init__(self, original_directory=None, original_extension='.jpg'):
     # call base class constructors to open a session to the database
-    super(Database, self).__init__(SQLITE_FILE, File)
-    self.original_directory = original_directory
-    self.original_extension = original_extension
+    super(Database, self).__init__(SQLITE_FILE, File,
+                                   original_directory, original_extension)
 
   def groups(self, protocol=None):
     """Returns the names of all registered groups"""
 
-    return ProtocolPurpose.group_choices # Same as Client.group_choices for this database
+    # Same as Client.group_choices for this database
+    return ProtocolPurpose.group_choices
 
   def genders(self):
     """Returns the list of genders: 'm' for male and 'f' for female"""
@@ -65,7 +66,7 @@ class Database(bob.db.base.SQLiteDatabase):
   def has_subworld(self, name):
     """Tells if a certain subworld is available"""
 
-    return self.query(Subworld).filter(Subworld.name==name).count() != 0
+    return self.query(Subworld).filter(Subworld.name == name).count() != 0
 
   def clients(self, protocol=None, groups=None, subworld=None, gender=None, birthyear=None):
     """Returns a set of Clients for the specific query by the user.
@@ -93,18 +94,23 @@ class Database(bob.db.base.SQLiteDatabase):
     properties.
     """
 
-    protocol = self.check_parameters_for_validity(protocol, 'protocol', self.protocol_names())
+    protocol = self.check_parameters_for_validity(
+        protocol, 'protocol', self.protocol_names())
     groups = self.check_parameters_for_validity(groups, 'group', self.groups())
-    subworld = self.check_parameters_for_validity(subworld, "subworld", self.subworld_names(), [])
-    gender = self.check_parameters_for_validity(gender, "gender", self.genders(), [])
-    birthyear = self.check_parameters_for_validity(birthyear, 'birthyear', list(range(1900,2050)), [])
+    subworld = self.check_parameters_for_validity(
+        subworld, "subworld", self.subworld_names(), [])
+    gender = self.check_parameters_for_validity(
+        gender, "gender", self.genders(), [])
+    birthyear = self.check_parameters_for_validity(
+        birthyear, 'birthyear', list(range(1900, 2050)), [])
 
     retval = []
     # List of the clients
     if "world" in groups:
       q = self.query(Client).filter(Client.sgroup == 'world')
       if subworld:
-        q = q.join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld))
+        q = q.join((Subworld, Client.subworld)).filter(
+            Subworld.name.in_(subworld))
       if gender:
         q = q.filter(Client.gender.in_(gender))
       if birthyear:
@@ -112,7 +118,8 @@ class Database(bob.db.base.SQLiteDatabase):
       q = q.order_by(Client.id)
       retval += list(q)
     if 'dev' in groups or 'eval' in groups:
-      q = self.query(Client).filter(and_(Client.sgroup != 'world', Client.sgroup.in_(groups)))
+      q = self.query(Client).filter(
+          and_(Client.sgroup != 'world', Client.sgroup.in_(groups)))
       if gender:
         q = q.filter(Client.gender.in_(gender))
       if birthyear:
@@ -191,14 +198,14 @@ class Database(bob.db.base.SQLiteDatabase):
     """Returns True if we have a client with a certain integer identifier"""
 
     self.assert_validity()
-    return self.query(Client).filter(Client.id==id).count() != 0
+    return self.query(Client).filter(Client.id == id).count() != 0
 
   def client(self, id):
     """Returns the Client object in the database given a certain id. Raises
     an error if that does not exist."""
 
     self.assert_validity()
-    return self.query(Client).filter(Client.id==id).one()
+    return self.query(Client).filter(Client.id == id).one()
 
   def tmodels(self, protocol=None, groups=None):
     """Returns a set of T-Norm models for the specific query by the user.
@@ -244,7 +251,7 @@ class Database(bob.db.base.SQLiteDatabase):
     return model_id
 
   def objects(self, protocol=None, purposes=None, model_ids=None, groups=None,
-      classes=None, subworld=None, distances=None):
+              classes=None, subworld=None, distances=None):
     """Returns a set of Files for the specific query by the user.
 
     Keyword Parameters:
@@ -285,26 +292,34 @@ class Database(bob.db.base.SQLiteDatabase):
     Returns: A list of Files with the given properties
     """
 
-    protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())
-    purposes = self.check_parameters_for_validity(purposes, "purpose", self.purposes())
+    protocol = self.check_parameters_for_validity(
+        protocol, "protocol", self.protocol_names())
+    purposes = self.check_parameters_for_validity(
+        purposes, "purpose", self.purposes())
     groups = self.check_parameters_for_validity(groups, "group", self.groups())
-    classes = self.check_parameters_for_validity(classes, "class", ('client', 'impostor'))
-    subworld = self.check_parameters_for_validity(subworld, "subworld", self.subworld_names(), [])
-    distances = self.check_parameters_for_validity(distances, "distance", (0,1,2,3))
+    classes = self.check_parameters_for_validity(
+        classes, "class", ('client', 'impostor'))
+    subworld = self.check_parameters_for_validity(
+        subworld, "subworld", self.subworld_names(), [])
+    distances = self.check_parameters_for_validity(
+        distances, "distance", (0, 1, 2, 3))
 
     import collections
     if(model_ids is None):
       model_ids = ()
-    elif(not isinstance(model_ids,collections.Iterable)):
+    elif(not isinstance(model_ids, collections.Iterable)):
       model_ids = (model_ids,)
 
     # Now query the database
     retval = []
     if 'world' in groups:
-      q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol)
+      q = self.query(File).join(Client).join(
+          (ProtocolPurpose, File.protocol_purposes)).join(Protocol)
       if subworld:
-        q = q.join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld))
-      q = q.filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.distance.in_(distances)))
+        q = q.join((Subworld, Client.subworld)).filter(
+            Subworld.name.in_(subworld))
+      q = q.filter(and_(Protocol.name.in_(
+          protocol), ProtocolPurpose.sgroup == 'world', File.distance.in_(distances)))
       if model_ids:
         q = q.filter(Client.id.in_(model_ids))
       q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -313,7 +328,8 @@ class Database(bob.db.base.SQLiteDatabase):
     if ('dev' in groups or 'eval' in groups):
       if('enroll' in purposes):
         q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
-              filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enroll'))
+            filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(
+                groups), ProtocolPurpose.purpose == 'enroll'))
         if model_ids:
           q = q.filter(Client.id.in_(model_ids))
         q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -322,7 +338,8 @@ class Database(bob.db.base.SQLiteDatabase):
       if('probe' in purposes):
         if('client' in classes):
           q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
-                filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe', File.distance.in_(distances)))
+              filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(
+                  groups), ProtocolPurpose.purpose == 'probe', File.distance.in_(distances)))
           if model_ids:
             q = q.filter(Client.id.in_(model_ids))
           q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -330,14 +347,14 @@ class Database(bob.db.base.SQLiteDatabase):
 
         if('impostor' in classes):
           q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
-                filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe', File.distance.in_(distances)))
+              filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(
+                  groups), ProtocolPurpose.purpose == 'probe', File.distance.in_(distances)))
           if len(model_ids) == 1:
             q = q.filter(not_(File.client_id.in_(model_ids)))
           q = q.order_by(File.client_id, File.camera, File.distance, File.id)
           retval += list(q)
 
-    return list(set(retval)) # To remove duplicates
-
+    return list(set(retval))  # To remove duplicates
 
   def tobjects(self, protocol=None, model_ids=None, groups=None):
     """Returns a set of Files for enrolling T-norm models for score
@@ -364,19 +381,21 @@ class Database(bob.db.base.SQLiteDatabase):
     # WARNING: Restrict to frontal camera (enroll T-Norm models)
     validcam = ('frontal',)
 
-    protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())
+    protocol = self.check_parameters_for_validity(
+        protocol, "protocol", self.protocol_names())
 
     import collections
     if(model_ids is None):
       model_ids = ()
-    elif(not isinstance(model_ids,collections.Iterable)):
+    elif(not isinstance(model_ids, collections.Iterable)):
       model_ids = (model_ids,)
 
     # Now query the database
     retval = []
     q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
-                     join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld)).\
-                     filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
+        join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld)).\
+        filter(and_(Protocol.name.in_(protocol),
+                    ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))
     q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -410,21 +429,24 @@ class Database(bob.db.base.SQLiteDatabase):
     # ZT-Norm cohort is 'onethird'
     subworld = ('onethird',)
     # WARNING: Restrict to non-frontal camera (enroll T-Norm models)
-    validcam = ('cam1','cam2','cam3','cam4','cam5')
+    validcam = ('cam1', 'cam2', 'cam3', 'cam4', 'cam5')
 
-    protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())
-    distances = self.check_parameters_for_validity(distances, "distance", (1,2,3))
+    protocol = self.check_parameters_for_validity(
+        protocol, "protocol", self.protocol_names())
+    distances = self.check_parameters_for_validity(
+        distances, "distance", (1, 2, 3))
 
     import collections
     if(model_ids is None):
       model_ids = ()
-    elif(not isinstance(model_ids,collections.Iterable)):
+    elif(not isinstance(model_ids, collections.Iterable)):
       model_ids = (model_ids,)
 
     retval = []
     q = self.query(File).join(Client).join((ProtocolPurpose, File.protocol_purposes)).join(Protocol).\
-                     join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld)).\
-                     filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world', File.camera.in_(validcam), File.distance.in_(distances)))
+        join((Subworld, Client.subworld)).filter(Subworld.name.in_(subworld)).\
+        filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup ==
+                    'world', File.camera.in_(validcam), File.distance.in_(distances)))
     if model_ids:
       q = q.filter(Client.id.in_(model_ids))
     q = q.order_by(File.client_id, File.camera, File.distance, File.id)
@@ -444,9 +466,9 @@ class Database(bob.db.base.SQLiteDatabase):
     """
 
     self.assert_validity()
-    # return the annotations as returned by the call function of the Annotation object
+    # return the annotations as returned by the call function of the
+    # Annotation object
     return file.annotation()
-
 
   def protocol_names(self):
     """Returns all registered protocol names"""
@@ -463,13 +485,13 @@ class Database(bob.db.base.SQLiteDatabase):
   def has_protocol(self, name):
     """Tells if a certain protocol is available"""
 
-    return self.query(Protocol).filter(Protocol.name==name).count() != 0
+    return self.query(Protocol).filter(Protocol.name == name).count() != 0
 
   def protocol(self, name):
     """Returns the protocol object in the database given a certain name. Raises
     an error if that does not exist."""
 
-    return self.query(Protocol).filter(Protocol.name==name).one()
+    return self.query(Protocol).filter(Protocol.name == name).one()
 
   def protocol_purposes(self):
     """Returns all registered protocol purposes"""
@@ -481,18 +503,17 @@ class Database(bob.db.base.SQLiteDatabase):
 
     return ProtocolPurpose.purpose_choices
 
-  def t_model_ids(self, protocol, groups = 'dev', **kwargs):
+  def t_model_ids(self, protocol, groups='dev', **kwargs):
     """Returns the list of model ids used for T-Norm of the given protocol for the given group that satisfy your query.
     For possible keyword arguments, please check the :py:meth:`tmodel_ids` function."""
     return self.uniquify(self.tmodel_ids(protocol=protocol, groups=groups, **kwargs))
 
-  def t_enroll_files(self, protocol, model_id, groups = 'dev', **kwargs):
+  def t_enroll_files(self, protocol, model_id, groups='dev', **kwargs):
     """Returns the list of T-Norm model enrollment File objects from the given model id of the given protocol for the given group that satisfy your query.
     For possible keyword arguments, please check the :py:meth:`tobjects` function."""
     return self.uniquify(self.tobjects(protocol=protocol, groups=groups, model_ids=(model_id,), **kwargs))
 
-  def z_probe_files(self, protocol, groups = 'dev', **kwargs):
+  def z_probe_files(self, protocol, groups='dev', **kwargs):
     """Returns the list of Z-Norm probe File objects to probe the model with the given model id of the given protocol for the given group that satisfy your query.
     For possible keyword arguments, please check the :py:meth:`zobjects` function."""
     return self.uniquify(self.zobjects(protocol=protocol, groups=groups, **kwargs))
-

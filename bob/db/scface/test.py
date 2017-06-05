@@ -181,8 +181,31 @@ def test_objects():
   assert len(db.objects(protocol='far', groups='eval', purposes='probe', classes='client', model_ids=100)) == 5
   assert len(db.objects(protocol='far', groups='eval', purposes='probe', classes='impostor', model_ids=100)) == 210
 
+  # Protocol IR
+  # World group
+  assert len(db.objects(protocol='IR', groups='world')) == 301
+  assert len(db.objects(protocol='IR', groups='world', purposes='train')) == 301
+  assert len(db.objects(protocol='IR', groups='world', purposes='train', model_ids=3)) == 7
+
+  # Dev group
+  assert len(db.objects(protocol='IR', groups='dev')) == 88
+  assert len(db.objects(protocol='IR', groups='dev', purposes='enroll')) == 44
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe')) == 44
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe', classes='client')) == 44
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe', classes='impostor')) == 44
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe', classes='client', model_ids=47)) == 1
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe', classes='impostor', model_ids=47)) == 43
+
+  # Eval group
+  assert len(db.objects(protocol='IR', groups='eval')) == 86
+  assert len(db.objects(protocol='IR', groups='eval', purposes='enroll')) == 43
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe')) == 43
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe', classes='client')) == 43
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe', classes='impostor')) == 43
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe', classes='client', model_ids=100)) == 1
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe', classes='impostor', model_ids=100)) == 42
+
   # TODO: T-norm and Z-norm files
-  # TODO: IR protocol
 
 
 @db_available

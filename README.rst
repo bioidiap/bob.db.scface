@@ -2,9 +2,9 @@
 .. Sun Aug 21 17:10:37 CEST 2016
 
 .. image:: http://img.shields.io/badge/docs-stable-yellow.svg
-   :target: http://pythonhosted.org/bob.db.scface/index.html
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.db.scface/stable/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.svg
-   :target: https://www.idiap.ch/software/bob/docs/latest/bob/bob.db.scface/master/index.html
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.db.scface/master/index.html
 .. image:: https://gitlab.idiap.ch/bob/bob.db.scface/badges/master/build.svg
    :target: https://gitlab.idiap.ch/bob/bob.db.scface/commits/master
 .. image:: https://gitlab.idiap.ch/bob/bob.db.scface/badges/master/coverage.svg
@@ -12,8 +12,6 @@
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.db.scface
 .. image:: http://img.shields.io/pypi/v/bob.db.scface.svg
-   :target: https://pypi.python.org/pypi/bob.db.scface
-.. image:: http://img.shields.io/pypi/dm/bob.db.scface.svg
    :target: https://pypi.python.org/pypi/bob.db.scface
 .. image:: https://img.shields.io/badge/original-data--files-a000a0.png
    :target: http://www.scface.org
@@ -32,7 +30,7 @@ This package does not contain the original SCface_ data files, which need to be 
 Installation
 ------------
 
-Complete Bob's `installation`_ instructions. Then, to install this pacakge,
+Complete Bob's `installation`_ instructions. Then, to install this package,
 run::
 
   $ conda install bob.db.scface

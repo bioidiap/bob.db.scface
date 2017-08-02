@@ -63,7 +63,7 @@ def test_clients():
   assert len(db.clients(groups='world', subworld='twothirds')) == 29
   # Check files relationship
   c = db.client(1)
-  assert len(c.files) == 22
+  assert len(c.files) == 23
 
 
 @db_available
@@ -71,8 +71,8 @@ def test_protocols():
 
   db = bob.db.scface.Database()
 
-  assert len(db.protocols()) == 4
-  assert len(db.protocol_names()) == 4
+  assert len(db.protocols()) == 5
+  assert len(db.protocol_names()) == 5
   assert db.has_protocol('combined')
 
   assert len(db.subworlds()) == 2
@@ -181,6 +181,30 @@ def test_objects():
   assert len(db.objects(protocol='far', groups='eval', purposes='probe', classes='client', model_ids=100)) == 5
   assert len(db.objects(protocol='far', groups='eval', purposes='probe', classes='impostor', model_ids=100)) == 210
 
+  # Protocol IR
+  # World group
+  assert len(db.objects(protocol='IR', groups='world')) == 301
+  assert len(db.objects(protocol='IR', groups='world', purposes='train')) == 301
+  assert len(db.objects(protocol='IR', groups='world', purposes='train', model_ids=3)) == 7
+
+  # Dev group
+  assert len(db.objects(protocol='IR', groups='dev')) == 88
+  assert len(db.objects(protocol='IR', groups='dev', purposes='enroll')) == 44
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe')) == 44
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe', classes='client')) == 44
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe', classes='impostor')) == 44
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe', classes='client', model_ids=47)) == 1
+  assert len(db.objects(protocol='IR', groups='dev', purposes='probe', classes='impostor', model_ids=47)) == 43
+
+  # Eval group
+  assert len(db.objects(protocol='IR', groups='eval')) == 86
+  assert len(db.objects(protocol='IR', groups='eval', purposes='enroll')) == 43
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe')) == 43
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe', classes='client')) == 43
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe', classes='impostor')) == 43
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe', classes='client', model_ids=100)) == 1
+  assert len(db.objects(protocol='IR', groups='eval', purposes='probe', classes='impostor', model_ids=100)) == 42
+
   # TODO: T-norm and Z-norm files
 
 
@@ -218,4 +242,3 @@ def test_driver_api():
   assert main('scface checkfiles --self-test'.split()) == 0
   assert main('scface reverse mugshot_frontal_cropped_all/066_frontal --self-test'.split()) == 0
   assert main('scface path 65 --self-test'.split()) == 0
-

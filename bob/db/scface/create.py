@@ -92,17 +92,21 @@ def add_files(session, imagedir, verbose):
     if frontal:
       session.add(File(int(v[0]), os.path.join(maindir, basename), 'frontal', 0))
     else:
-      session.add(File(int(v[0]), os.path.join(maindir, basename), v[1], int(v[2])))
+      if len(v) == 2:
+        session.add(File(int(v[0]), os.path.join(maindir, basename), v[1], 0))
+      else:
+        session.add(File(int(v[0]), os.path.join(maindir, basename), v[1], int(v[2])))
 
   for maindir in ['mugshot_frontal_cropped_all', 'surveillance_cameras_distance_1',\
-                  'surveillance_cameras_distance_2', 'surveillance_cameras_distance_3']:
+                  'surveillance_cameras_distance_2', 'surveillance_cameras_distance_3',
+                  'surveillance_cameras_IR_cam8']:
     if verbose: print("Adding files from dir '%s'" % maindir)
     if not os.path.isdir( os.path.join( imagedir, maindir) ):
       continue
-    elif maindir == 'mugshot_frontal_cropped_all':
+    elif maindir in ('mugshot_frontal_cropped_all', 'surveillance_cameras_IR_cam8'):
       for f in filter(nodot, os.listdir( os.path.join( imagedir, maindir) )):
         basename, extension = os.path.splitext(f)
-        add_file(session, basename, maindir, True, verbose)
+        add_file(session, basename, maindir, maindir=='mugshot_frontal_cropped_all', verbose)
     else:
       for camdir in filter(nodot, os.listdir( os.path.join( imagedir, maindir) )):
         subdir = os.path.join(maindir, camdir)
@@ -151,7 +155,7 @@ def add_protocols(session, verbose):
   protocol_definitions = {}
 
   # Protocol combined
-  world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [])]
+  world = [(['frontal', 'cam1', 'cam2', 'cam3', 'cam4', 'cam5',], [])]
   enroll = [(['frontal'], [0])]
   probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [1,2,3])]
   protocol_definitions['combined'] = [world, enroll, probe]
@@ -173,6 +177,13 @@ def add_protocols(session, verbose):
   enroll = [(['frontal'], [0])]
   probe = [(['cam1', 'cam2', 'cam3', 'cam4', 'cam5'], [1])]
   protocol_definitions['far'] = [world, enroll, probe]
+
+  # Protocol IR
+  world = [(['cam6', 'cam7', 'cam8'], [])]
+  enroll = [(['cam8'], [0])]
+  probe = [(['cma6', 'cam7'], [1])]
+  protocol_definitions['IR'] = [world, enroll, probe]
+
 
   # 2. ADDITIONS TO THE SQL DATABASE
   protocolPurpose_list = [('world', 'train'), ('dev', 'enroll'), ('dev', 'probe'), ('eval', 'enroll'), ('eval', 'probe')]
